@@ -4,17 +4,9 @@ from map import rooms
 from player import *
 from items import *
 from gameparser import *
+clear = "\n" * 1
 
-
-
-def mass():
-    current_mass = 0
-    for x in inventory:
-        current_mass = current_mass + x["mass"]
-        if current_mass >= 3:
-            current_mass = current_mass - x["mass"]
-            print("You are carrying " + str(round(current_mass, 2)) + " kg, drop some of the stuff you have!" )
-            return False       
+      
 
 def list_of_items(items):
     """This function takes a list of items (see items.py for the definition) and
@@ -256,18 +248,35 @@ def execute_take(item_id):
     "You cannot take that."
     """
     # to take item if it exists in the room
-
-    for item in current_room["items"]:
-            if item_id == item["id"]:
-                current_room["items"].remove(item)
-                inventory.append(item)
-                break
-
-    if item["id"] != item_id:
-        print("You cannot take that.")                          
-    if mass() == False:
-        inventory.remove(item)
-        current_room["items"].append(item)          
+ # to take item if it exists in the room
+    for e in current_room["items"]:
+        if e["id"] == item_id:
+            #check if overburdened
+            total_mass = 0
+            for m in inventory:
+                total_mass += m["mass"]
+            total_mass += e["mass"]
+            max_mass=5
+            if total_mass >= max_mass:
+                print("You are carrying too much. Drop something first!")
+                input("Press any key to continue")
+                print(clear)
+                return
+            #else, take item
+            current_room["items"].remove(e)
+            inventory.append(e)
+            print(clear)
+            print("You took the " + item_id)
+            input("Press any key to continue")
+            print(clear)
+            return
+        else:
+            continue
+    print(clear)
+    print("You cannot take that.")
+    input("Press any key to continue")
+    print(clear)
+         
         
           
 
